@@ -10,83 +10,46 @@ Read Data from excercise.csv
 """
 
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 
-df = pd.read_csv('exercise1.csv')
-
-print(df)
+MYdata = pd.read_csv("exercise1.csv")
 
 """Choose Dependent and Independent Variables"""
 
-y = df['Visitors']   #dependent var
-
-X = df[['ParkingTkts', 'AvgTemp']]  #independent var
+X = MYdata[['Visitors', 'AvgTemp']]
+y = MYdata['ParkingTkts']
 
 """Split Your datatset into 1:2 partition"""
 
-from sklearn.model_selection import train_test_split
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.67, random_state=42)
-
-print(X_train.shape[0])
-print(X_test.shape[0])
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
 """Train your Regression Model on Training Dataset"""
 
-from sklearn.linear_model import LinearRegression
-
 model = LinearRegression()
-
-# Train the model on the training dataset
 model.fit(X_train, y_train)
-
-# Print the coefficients
-print("Intercept:", model.intercept_)
-print("Coefficients:", model.coef_)
 
 """Test your Model using Testing Data Set"""
 
-y_pred = model.predict(X_test)
-
-# Display the predicted values
-print("Predicted values:", y_pred)
+y_predict = model.predict(X_test)
 
 """Implement Evaluation Metrices"""
 
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-import pandas as pd
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-
-
-# Calculate evaluation metrics
-mae = mean_absolute_error(y_test, y_pred)
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-
-# Display the evaluation metrics
-print("Mean Absolute Error (MAE):", mae)
-print("Mean Squared Error (MSE):", mse)
-print("R-squared (R2) Score:", r2)
+MSE = mean_squared_error(y_test, y_predict)
+r2 = r2_score(y_test, y_predict)
+print("Mean Squared Error:", MSE)
+print("R squared:", r2)
 
 """Draw Graph of Predicted and Actual Dependent Values  vs Independent Values"""
 
-import matplotlib.pyplot as plt
-
-# Plotting actual vs predicted values for the number of visitors
-plt.figure(figsize=(10, 6))
-
-# Plotting actual values
-plt.scatter(X_test['ParkingTkts'], y_test, color='blue', label='Actual')
-
-# Plotting predicted values
-plt.scatter(X_test['ParkingTkts'], y_pred, color='red', label='Predicted')
-
-# Adding labels and title
-plt.xlabel('Number of Parking Tickets')
-plt.ylabel('Number of Visitors')
-plt.title('Actual vs Predicted Number of Visitors (Parking Tickets)')
+plt.scatter(X_test['Visitors'], y_test, color='black', label='Actual')
+plt.scatter(X_test['Visitors'], y_predict, color='blue', label='Predicted')
+plt.xlabel('Visitors')
+plt.ylabel('Parking Tickets')
+plt.title('Actual vs Predicted Parking Tickets')
 plt.legend()
-
-# Show plot
 plt.show()
 
